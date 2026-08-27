@@ -1,61 +1,55 @@
 # Git Secrets Sentinel
 
-A lightweight local Git pre-commit security scanner designed to catch common accidental secret leaks before they reach a repository.
+Lightweight shift-left secret detection for staged Git changes.
 
 ## What it does
 
-Git Secrets Sentinel scans **staged Git files** and returns exit code `1` when a configured secret pattern is detected. That makes it usable as both a developer-side pre-commit guardrail and a CI check.
+Git Secrets Sentinel inspects files in the Git staging area before commit and blocks the commit when configured secret patterns are detected.
 
-### Detects
+Detected patterns include:
 
-- AWS access-key patterns
+- AWS access-key format
 - Private-key headers
 - Hardcoded password assignments
 - Azure secret/token assignments
-- Generic API key/token assignments
+- Generic API-key/token assignments
 
-## Quick start
+## Why it exists
 
-From this repository:
+Accidental credential exposure is a preventable engineering failure. A local pre-commit guardrail gives developers immediate feedback before sensitive material reaches the remote repository.
 
-```powershell
-python sentinel.py
-```
+## Install as a pre-commit hook
 
-To install the scanner into another local Git repository:
+From a target repository:
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File .\install-hook.ps1
+powershell -ExecutionPolicy Bypass -File C:\path\to\git-secrets-sentinel\install-hook.ps1
 ```
 
-The installer creates a versioned Git pre-commit hook that calls the Sentinel scanner.
+Or run the scanner directly:
+
+```powershell
+python C:\path\to\git-secrets-sentinel\sentinel.py
+```
 
 ## Example
 
 ```text
-SECURITY ERROR: config.txt: AWS access key
+SECURITY ERROR: config.txt: hardcoded password
 
 COMMIT BLOCKED: remove or externalize detected secrets before committing.
 ```
 
-## Security model
-
-This project is intentionally small. It is a **pattern-based shift-left control**, not a complete secret-management platform.
-
-Use it together with:
-
-1. GitHub Secret Scanning / push protection
-2. CI security scanning
-3. Credential rotation
-4. Least-privilege access
-5. Managed identities / workload identity where available
-6. Dedicated secret-management systems
-
 ## Limitations
 
-Regex-based detection can produce false positives and false negatives. Obfuscated, encoded or provider-specific credentials may require additional detectors.
+This is a pattern-based guardrail. It cannot guarantee detection of every secret and can produce false positives. It should complement repository secret scanning, push protection, credential rotation and proper secret management.
 
-The tool does not transmit scanned content anywhere.
+## Development
+
+```powershell
+python -m unittest discover -s tests -v
+python -m py_compile sentinel.py
+```
 
 ## License
 
