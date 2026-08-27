@@ -1,26 +1,16 @@
 ﻿# Git Secrets Sentinel
 
-Lightweight Git pre-commit security scanner for detecting common accidental secret leaks.
+A lightweight local Git pre-commit security scanner.
 
-## Features
-
-- AWS access-key detection
-- Private-key detection
-- Hardcoded password detection
-- Scans staged Git files
-- Returns a non-zero exit code when a match is found
-- Suitable for local hooks and CI
+## Detects
+- AWS access-key patterns
+- Private-key headers
+- Hardcoded password assignments
+- Azure secret and token assignments
+- Generic API key and token patterns
 
 ## Usage
 
-`powershell
-python sentinel.py
-`",
-",
+    python sentinel.py
 
-
-This is a lightweight pattern-based guardrail. It does not replace GitHub Secret Scanning, push protection, or dedicated secret management.
-
-## Project goal
-
-Shift security left by detecting common accidental secret exposure before code is committed.
+The scanner checks staged Git files and returns exit code 1 when a configured secret pattern is detected.
