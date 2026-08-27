@@ -1,11 +1,14 @@
-﻿import os
+import os
 import re
 import subprocess
 import sys
 from pathlib import Path
 
 PATTERNS = [
-    ("AWS access key", re.compile(r"\bAKIA[0-9A-Z]{16}\b")),
+    (
+        "AWS access key",
+        re.compile(r"\bAKIA[0-9A-Z]{16}\b"),
+    ),
     (
         "private key",
         re.compile(
@@ -15,22 +18,23 @@ PATTERNS = [
     (
         "hardcoded password",
         re.compile(
-            r"""(?i)\bpassword\s*[:=]\s*["'][^"']{4,}["']"""
+            r"(?i)\bpassword\s*[:=]\s*[\"'][^\"']{4,}[\"']"
         ),
     ),
     (
         "Azure secret assignment",
         re.compile(
-            r"""(?i)\bAZURE_[A-Z0-9_]*(?:SECRET|PASSWORD|KEY|TOKEN)[A-Z0-9_]*\s*[:=]\s*["'][^"']{8,}["']"""
+            r"(?i)\bAZURE_[A-Z0-9_]*(?:SECRET|PASSWORD|KEY|TOKEN)[A-Z0-9_]*\s*[:=]\s*[\"'][^\"']{8,}[\"']"
         ),
     ),
     (
         "generic API token",
         re.compile(
-            r"""(?i)\b(?:api[_-]?key|api[_-]?token|secret[_-]?key)\s*[:=]\s*["'][^"']{12,}["']"""
+            r"(?i)\b(?:api[_-]?key|api[_-]?token|secret[_-]?key)\s*[:=]\s*[\"'][^\"']{12,}[\"']"
         ),
     ),
 ]
+
 
 def staged_files():
     result = subprocess.run(
@@ -51,8 +55,9 @@ def staged_files():
         return []
 
     return [
-        x for x in result.stdout.splitlines()
-        if x.strip()
+        filename
+        for filename in result.stdout.splitlines()
+        if filename.strip()
     ]
 
 
@@ -62,7 +67,8 @@ def scan_file(filepath):
             encoding="utf-8",
             errors="ignore",
         )
-    except OSError:
+    except OSError as exc:
+        print(f"WARNING: Could not read {filepath}: {exc}")
         return []
 
     findings = []
@@ -108,7 +114,6 @@ def main():
         f"Sentinel check passed: "
         f"{len(files)} staged file(s) scanned."
     )
-
     return 0
 
 
