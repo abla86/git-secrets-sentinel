@@ -54,3 +54,7 @@ python -m py_compile sentinel.py
 ## License
 
 MIT
+
+## Change-control audit
+
+See `docs/REPOSITORY-CHANGE-AUDIT-2026-08-28.md` for change-control and traceability rules.
